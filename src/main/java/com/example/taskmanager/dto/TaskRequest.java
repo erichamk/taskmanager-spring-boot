@@ -9,6 +9,8 @@ public class TaskRequest {
 
     private String description;
 
+    private String owner;
+
     public String getTitle() {
         return title;
     }
@@ -23,5 +25,13 @@ public class TaskRequest {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

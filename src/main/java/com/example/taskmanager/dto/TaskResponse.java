@@ -4,6 +4,7 @@ public class TaskResponse {
     private Long id;
     private String title;
     private String description;
+    private String owner;
     private boolean completed;
 
     public Long getId() {
@@ -28,6 +29,14 @@ public class TaskResponse {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public boolean isCompleted() {

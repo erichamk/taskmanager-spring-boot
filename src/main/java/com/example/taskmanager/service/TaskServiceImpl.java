@@ -5,10 +5,19 @@ import com.example.taskmanager.dto.TaskResponse;
 import com.example.taskmanager.entity.Task;
 import com.example.taskmanager.exception.ResourceNotFoundException;
 import com.example.taskmanager.repository.TaskRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.criteria.Predicate;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -43,16 +52,26 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskResponse> getAllTasks() {
+    public List<TaskResponse> getAllTasks(Pageable pageable, String owner, LocalDate startDate, LocalDate endDate) {
 
-        return taskRepository.findAll()
+        PageRequest pageRequest = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                pageable.getSortOr(Sort.by(Sort.Direction.ASC, "title"))
+        );
+        Page<Task> page;
+
+        Specification<Task> spec = filterTasks(owner, startDate, endDate);
+        page = taskRepository.findAll(spec, pageRequest);
+
+        return page.getContent()
                 .stream()
                 .map(this::mapToResponse)
                 .toList();
     }
 
     @Override
-    public TaskResponse updateTask(Long id, TaskRequest request) {
+    public void updateTask(Long id, TaskRequest request) {
 
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
@@ -60,11 +79,13 @@ public class TaskServiceImpl implements TaskService {
         task.setTitle(request.getTitle());
         task.setDescription(request.getDescription());
 
-        return mapToResponse(taskRepository.save(task));
+        taskRepository.save(task);
     }
 
     @Override
     public void deleteTask(Long id) {
+        taskRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
         taskRepository.deleteById(id);
     }
 
@@ -75,8 +96,26 @@ public class TaskServiceImpl implements TaskService {
         dto.setId(task.getId());
         dto.setTitle(task.getTitle());
         dto.setDescription(task.getDescription());
+        dto.setOwner(task.getOwner());
         dto.setCompleted(task.isCompleted());
 
         return dto;
+    }
+
+    private static Specification<Task> filterTasks(String owner, LocalDate startDate, LocalDate endDate) {
+        return (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (owner != null && !owner.isEmpty()) {
+                predicates.add(cb.equal(root.get("owner"), owner));
+            }
+
+            if (startDate != null && endDate != null) {
+                predicates.add(cb.between(root.get("createdAt"), startDate, endDate));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
     }
 }

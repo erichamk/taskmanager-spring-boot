@@ -19,6 +19,8 @@ public class Task {
 
     private LocalDateTime createdAt;
 
+    private String owner;
+
     public Long getId() {
         return id;
     }
@@ -57,5 +59,13 @@ public class Task {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

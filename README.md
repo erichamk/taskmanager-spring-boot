@@ -14,6 +14,7 @@ A simple RESTful backend for managing tasks built with Java and Spring Boot.
 - Layered architecture (Controller - Service - Repository)
 - DTO pattern for API contracts
 - Request validation
+- Pagination and filtering
 - Global exception handling
 - PostgreSQL database integration
 
@@ -42,7 +43,8 @@ mvn spring-boot:run
 Request:
 {
     "title": "",
-    "description": ""
+    "description": "",
+    "owner": ""
 }
 
 Response:
@@ -50,22 +52,24 @@ Response:
     "id": 1,
     "title": "",
     "description": "",
+    "owner": "",
     "completed": false
 }
 ```
 
-- `GET /api/tasks`: Get all tasks.
+- `GET /api/tasks?page={}&size={}&owner={}&startDate={}&endDate={}`: Get tasks by filter and paging.
 
 ```
 Response:
-
 [
     {
         "id": 1,
         "title": "",
         "description": "",
+        "owner": "",
         "completed": false
-    }
+    },
+    { ... }
 ]
 ```
 
@@ -77,6 +81,7 @@ Response:
     "id": 1,
     "title": "",
     "description": "",
+    "owner": "",
     "completed": false
 }
 ```
@@ -87,7 +92,8 @@ Response:
 Request:
 {
     "title": "",
-    "description": ""
+    "description": "",
+    "owner": ""
 }
 ```
 

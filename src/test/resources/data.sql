@@ -7,3 +7,6 @@ VALUES (3, 'Task 3', 'Task description 3', false, CURRENT_DATE, 'user2');
 INSERT INTO TASKS(ID, TITLE, DESCRIPTION, COMPLETED, CREATED_AT, OWNER)
 VALUES (4, 'Task 4', 'Task description 4', false, CURRENT_DATE - INTERVAL '1 days', 'user2');
 SELECT setval('tasks_id_seq', (SELECT MAX(id) FROM tasks));
+
+INSERT INTO USERS(ID, USERNAME, PASSWORD, ROLE)
+VALUES (1, 'user1', 'encryptedpassword', 'USER');

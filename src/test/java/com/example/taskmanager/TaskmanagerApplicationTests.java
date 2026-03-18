@@ -41,6 +41,7 @@ class TaskmanagerApplicationTests {
         ExchangeResult response = client.post()
                 .uri("/api/tasks")
                 .contentType(MediaType.APPLICATION_JSON)
+//                .header("Authorization", "Bearer ")
                 .body(task)
                 .exchange()
                 .expectStatus().isCreated().returnResult();
